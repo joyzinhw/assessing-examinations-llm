@@ -1,3 +1,6 @@
+
+
+#transforma cvs em json todo organizado
 import csv
 import json
 
@@ -6,7 +9,7 @@ dados = {}
 with open("src/dataset/cvs-test.csv", encoding="utf-8") as f:
     reader = csv.reader(f, delimiter=",", quotechar='"')
 
-    next(reader)  # pula header
+    next(reader)  
 
     for row in reader:
         if len(row) < 5:
@@ -34,7 +37,7 @@ with open("src/dataset/cvs-test.csv", encoding="utf-8") as f:
 
 resultado = [v for v in dados.values() if v["correta"]]
 
-with open("dataset_transformado.json", "w", encoding="utf-8") as f:
+with open("src/dataset/dataset.json", "w", encoding="utf-8") as f:
     json.dump(resultado, f, ensure_ascii=False, indent=2)
 
 print("Total de questões:", len(resultado))
