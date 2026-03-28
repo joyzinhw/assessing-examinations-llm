@@ -1580,7 +1580,7 @@ do respectivo cargo.
 progressão na carreira acarretará, para Joana, o dever de
 ressarcir ao erário os gastos com a formação educacional.
 
-
+prova pc2025 tipo 03
 
 Direito Penal (pn)
 Código: pc2025_03_pn
@@ -2368,6 +2368,8 @@ referidos atos no seu rol de atribuições legais, que
 (C) apenas o ato II se enquadra.
 (D) apenas os atos I e III se enquadram.
 (E) apenas os atos II e III se enquadram.
+
+prova pc2025 tipo 04
 
 Direito Penal (pn)
 Código: pc2025_04_pn
