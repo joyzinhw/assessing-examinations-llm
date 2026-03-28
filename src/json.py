@@ -1,97 +1,47 @@
-
-
-# #transforma cvs em json todo organizado
-# import csv
-# import json
-
-# dados = {}
-
-# with open("src/dataset/cvs-test.csv", encoding="utf-8") as f:
-#     reader = csv.reader(f, delimiter=",", quotechar='"')
-
-#     next(reader)  
-
-#     for row in reader:
-#         if len(row) < 5:
-#             continue
-
-#         id_, enunciado, alternativa, texto_alt, label = row[:5]
-
-#         try:
-#             label = int(label)
-#         except:
-#             continue
-
-#         if id_ not in dados:
-#             dados[id_] = {
-#                 "id": id_,
-#                 "pergunta": enunciado,
-#                 "alternativas": {},
-#                 "correta": None
-#             }
-
-#         dados[id_]["alternativas"][alternativa] = texto_alt
-
-#         if label == 1:
-#             dados[id_]["correta"] = alternativa
-
-# resultado = [v for v in dados.values() if v["correta"]]
-
-# with open("src/dataset/dataset.json", "w", encoding="utf-8") as f:
-#     json.dump(resultado, f, ensure_ascii=False, indent=2)
-
-# print("Total de questões:", len(resultado))
-
 import os
 import re
 import json
-from docx import Document
 
-PASTA = "src/concursos/pp2024/Provas"
-SAIDA = "src/dataset/pp2024.json"
+PASTA = "src/txt"
+SAIDA = "src/dataset/dataset.json"
 
 dados = []
 
-# ======================
-# 🔹 FUNÇÃO: LER DOCX
-# ======================
-def ler_docx(caminho):
-    doc = Document(caminho)
-    texto = []
-    for p in doc.paragraphs:
-        if p.text.strip():
-            texto.append(p.text.strip())
-    return "\n".join(texto)
+def ler_txt(caminho):
+    with open(caminho, "r", encoding="utf-8") as f:
+        return f.read()
 
 
-# ======================
-# 🔹 QUEBRAR QUESTÕES (ROBUSTO)
-# ======================
 def extrair_questoes(texto):
-    # aceita: 21. 21) 21 - 21
-    padrao = r'\n?\s*(\d{1,3})[\.\)\-]?\s+'
-    partes = re.split(padrao, texto)
+    partes = re.split(r'\n\s*(\d{1,3})\.\s', texto)
 
     questoes = []
 
     for i in range(1, len(partes), 2):
-        try:
-            numero = int(partes[i])
-            conteudo = partes[i+1]
-            questoes.append((numero, conteudo.strip()))
-        except:
-            continue
+        numero = int(partes[i])
+        conteudo = partes[i+1]
+        questoes.append((numero, conteudo.strip()))
 
     return questoes
 
 
-# ======================
-# 🔹 EXTRAI ALTERNATIVAS (ROBUSTO)
-# ======================
+def extrair_itens(texto):
+    padrao = r'\b(I{1,3}V?)\.\s*(.*?)\s*(?=(I{1,3}V?\.)|$)'
+    itens = re.findall(padrao, texto, re.DOTALL)
+
+    resultado = []
+
+    for item in itens:
+        resultado.append({
+            "item": item[0],
+            "texto": item[1].strip()
+        })
+
+    return resultado
+
+
 def extrair_alternativas(texto):
-    # aceita: a) A) (a) A. a - etc + inclui E
-    padrao = r'[\(\[]?([A-Ea-e])[\)\]\.\-]\s*'
-    partes = re.split(padrao, texto)
+    partes = re.split(r'\n([a-e])\)\s', texto, flags=re.IGNORECASE)
 
     if len(partes) < 3:
         return texto.strip(), {}
@@ -107,48 +57,46 @@ def extrair_alternativas(texto):
     return enunciado, alternativas
 
 
-# ======================
-# 🔹 PROCESSAR ARQUIVOS
-# ======================
 for arquivo in os.listdir(PASTA):
-    if not arquivo.endswith(".docx"):
+    if not arquivo.endswith(".txt"):
         continue
 
     caminho = os.path.join(PASTA, arquivo)
-
     print(f"Processando: {arquivo}")
 
-    texto = ler_docx(caminho)
+    texto = ler_txt(caminho)
+
+    # 🔥 se quiser usar sua limpeza OCR:
+    # texto = clean_ocr(texto)
+
     questoes = extrair_questoes(texto)
 
-    print(f"  -> {len(questoes)} questões encontradas")
-
-    # identifica tipo: a, b, c
-    tipo = arquivo.split("_")[-1].replace(".docx", "").lower()
+    nome_prova = arquivo.split("_")[0]
+    tipo = arquivo.split("_")[1].replace(".txt", "").lower()
 
     for numero, conteudo in questoes:
-        if numero < 21 or numero > 52:
-            continue
 
         enunciado, alternativas = extrair_alternativas(conteudo)
 
-        # 🔥 NÃO descarta tão fácil
-        if len(alternativas) < 3:
+        # ignora coisas que não são questões válidas
+        if len(alternativas) < 2:
             continue
 
+        itens = extrair_itens(enunciado)
+
         item = {
-            "id": f"pp2024_{tipo}_{numero}",
-            "pergunta": enunciado,
-            "alternativas": alternativas,
-            "correta": None
+            "id": f"{nome_prova}_{tipo}_{numero}",
+            "numero": numero,
+            "enunciado": enunciado,
+            "alternativas": alternativas
         }
+
+        if len(itens) > 0:
+            item["itens"] = itens
 
         dados.append(item)
 
 
-# ======================
-# 🔹 SALVAR JSON
-# ======================
 with open(SAIDA, "w", encoding="utf-8") as f:
     json.dump(dados, f, ensure_ascii=False, indent=2)
 
