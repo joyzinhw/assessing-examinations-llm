@@ -23,6 +23,7 @@ def remover_lixo(texto):
         if re.search(r'SEJUS', l, re.IGNORECASE): continue
         if re.search(r'NOÇÕES DE DIREITO', l, re.IGNORECASE): continue
         if re.search(r'DIREITO PENAL', l, re.IGNORECASE): continue
+    
 
         if re.match(r'^\d+$', l): continue
         if re.search(r'\d+CONCURSO', l): continue
@@ -39,6 +40,7 @@ def remover_links_datas(texto):
     texto = re.sub(r'Disponível em:.*', '', texto, flags=re.IGNORECASE)
     texto = re.sub(r'Acesso em:.*', '', texto, flags=re.IGNORECASE)
     texto = re.sub(r'Acesso em\s*\.*', '', texto, flags=re.IGNORECASE)
+    texto = re.sub(r'\b[hH]comologado\b', 'homologado', texto, flags=re.IGNORECASE)
     texto = re.sub(r'\b\d{2}/\d{2}/\d{4}\b', '', texto)
     return texto
 
@@ -82,6 +84,7 @@ def clean_ocr(texto):
         "omo": "como",
         "prcomover": "promover",
         "interes interesse": "interesse",
+        
     }
 
     for errado, certo in correcoes.items():
