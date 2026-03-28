@@ -1,0 +1,210 @@
+<<<<<<< HEAD
+=======
+[
+  {
+    "numero": 21,
+    "enunciado": "No que se refere aos direitos e garantias individuais, assinale a alternativa correta.",
+    "alternativas": {
+      "A": "A tutela da inviolabilidade do domicílio apenas admite ingresso mediante consentimento ou, a qualquer hora, por determinação judicial.",
+      "B": "As associações só poderão ser dissolvidas ou ter atividades suspensas por decisão judicial transitada em julgado.",
+      "C": "Todos podem reunir-se pacificamente sem autorização, desde que não frustrem outra reunião, sendo exigido apenas aviso prévio.",
+      "D": "É assegurado somente a determinadas pessoas o acesso à informação e o sigilo da fonte.",
+      "E": "A prática do racismo constitui crime afiançável sujeito à detenção."
+    }
+  },
+  {
+    "numero": 22,
+    "enunciado": "Avalie as afirmações sobre direitos fundamentais.",
+    "itens": [
+      {"item": "I", "texto": "A CF/88 veda pena de morte (salvo guerra), perpétua, trabalhos forçados, banimento e cruéis."},
+      {"item": "II", "texto": "Liberdade de expressão, devido processo legal e direito de greve são direitos individuais."},
+      {"item": "III", "texto": "Em perigo público, autoridade pode usar propriedade particular com indenização posterior."},
+      {"item": "IV", "texto": "A lei assegura proteção à propriedade industrial e marcas visando interesse social."}
+    ],
+    "alternativas": {
+      "A": "I e II.",
+      "B": "II e III.",
+      "C": "III e IV.",
+      "D": "I e III.",
+      "E": "II e IV."
+    }
+  },
+  {
+    "numero": 23,
+    "enunciado": "Sobre a organização do Estado brasileiro, assinale a alternativa correta.",
+    "alternativas": {
+      "A": "É vedado ao Estado estabelecer cultos religiosos, salvo colaboração de interesse público.",
+      "B": "Telecomunicações são competência comum da União e Estados.",
+      "C": "Ordenamento territorial urbano é competência privativa da União.",
+      "D": "Municípios podem formar Territórios Federais.",
+      "E": "Participação em recursos naturais é só da União e Municípios."
+    }
+  },
+  {
+    "numero": 24,
+    "enunciado": "Sobre o Poder Legislativo, assinale a alternativa correta.",
+    "alternativas": {
+      "A": "Legislatura dura 8 anos.",
+      "B": "Cada estado elege 2 senadores.",
+      "C": "Congresso decide tratados com sanção presidencial.",
+      "D": "Câmara autoriza processo contra Presidente por 2/3.",
+      "E": "Senado elege membros do Conselho da República."
+    }
+  },
+  {
+    "numero": 25,
+    "enunciado": "Sobre o Poder Judiciário, assinale a alternativa correta.",
+    "alternativas": {
+      "A": "Juízes podem receber auxílios de qualquer origem.",
+      "B": "Vitaliciedade após 3 anos no primeiro grau.",
+      "C": "Julgamentos são públicos e fundamentados, podendo restringir presença.",
+      "D": "Remoção depende de maioria de 2/3.",
+      "E": "Juiz não pode exercer outra função."
+    }
+  },
+  {
+    "numero": 26,
+    "enunciado": "Sobre a Advocacia-Geral da União, assinale a alternativa correta.",
+    "alternativas": {
+      "A": "Membros possuem vitaliciedade.",
+      "B": "Advogado-Geral é nomeado pelo Presidente.",
+      "C": "Procuradores estaduais representam a União.",
+      "D": "Dívida ativa é da AGU.",
+      "E": "Membros possuem estabilidade constitucional."
+    }
+  },
+  {
+    "numero": 27,
+    "enunciado": "Sobre o Ministério Público, assinale a alternativa correta.",
+    "alternativas": {
+      "A": "CNMP não admite recondução.",
+      "B": "Defende direitos indígenas.",
+      "C": "PGR mandato 4 anos.",
+      "D": "MP presta orientação jurídica.",
+      "E": "Garantias incluem unidade e independência."
+    }
+  },
+  {
+    "numero": 28,
+    "enunciado": "Sobre direitos políticos, assinale a alternativa correta.",
+    "alternativas": {
+      "A": "Soberania exercida por plebiscito ou referendo.",
+      "B": "Voto obrigatório desde 16 anos.",
+      "C": "Iniciativa popular exige 1% do eleitorado.",
+      "D": "Naturalizado não pode ser senador.",
+      "E": "Chefes do Executivo devem renunciar 6 meses antes."
+    }
+  },
+  {
+    "numero": 29,
+    "enunciado": "Pedro vê Antônio se afogando e não o salva para matá-lo. Qual crime?",
+    "alternativas": {
+      "A": "Homicídio culposo.",
+      "B": "Homicídio doloso por omissão própria.",
+      "C": "Não houve crime.",
+      "D": "Homicídio doloso comissivo por omissão.",
+      "E": "Homicídio doloso eventual."
+    }
+  },
+  {
+    "numero": 30,
+    "enunciado": "José pega mala por engano e devolve. Houve crime?",
+    "alternativas": {
+      "A": "Sim, furto culposo.",
+      "B": "Não, erro de tipo.",
+      "C": "Não, erro de proibição.",
+      "D": "Não, erro na execução.",
+      "E": "Não, excludente de punibilidade."
+    }
+  },
+  {
+    "numero": 31,
+    "enunciado": "Sobre teoria do crime, assinale a correta.",
+    "alternativas": {
+      "A": "Tentativa subsiste na desistência voluntária.",
+      "B": "Arrependimento eficaz só em crimes sem violência.",
+      "C": "Só pune dolo salvo exceções.",
+      "D": "Tentativa punida mesmo impossível.",
+      "E": "Erro de tipo exclui pena sempre."
+    }
+  },
+  {
+    "numero": 32,
+    "enunciado": "Arthur e José combinam furto, mas Arthur comete estupro. José responde por:",
+    "alternativas": {
+      "A": "Furto e estupro em concurso material.",
+      "B": "Furto e partícipe de estupro.",
+      "C": "Furto simples.",
+      "D": "Furto e associação criminosa.",
+      "E": "Furto qualificado."
+    }
+  },
+  {
+    "numero": 33,
+    "enunciado": "Sobre regimes de pena, analise os itens.",
+    "itens": [
+      {"item": "I", "texto": "Regime fechado é em segurança máxima ou média."},
+      {"item": "II", "texto": "Semiaberto é colônia agrícola."},
+      {"item": "III", "texto": "Aberto é casa de albergado."},
+      {"item": "IV", "texto": "Pena > 8 anos inicia no fechado."},
+      {"item": "V", "texto": "4 a 8 anos pode iniciar no semiaberto."},
+      {"item": "VI", "texto": "Até 4 anos pode iniciar no aberto."}
+    ],
+    "alternativas": {
+      "A": "I, II, III e V.",
+      "B": "I, II, III, IV e V.",
+      "C": "II, III, IV, V e VI.",
+      "D": "I, IV, V e VI.",
+      "E": "I, II, III, IV, V e VI."
+    }
+  },
+  {
+    "numero": 34,
+    "enunciado": "Sobre crimes contra a vida, assinale a alternativa incorreta.",
+    "alternativas": {
+      "A": "Homicídio pode ter redução por relevante valor moral.",
+      "B": "Homicídio contra menor de 14 é qualificado.",
+      "C": "Aumento se cometido por rede social.",
+      "D": "Aumento se líder de grupo virtual.",
+      "E": "Contágio venéreo é moléstia grave."
+    }
+  },
+  {
+    "numero": 35,
+    "enunciado": "Sobre crimes patrimoniais e leis recentes, analise os itens.",
+    "itens": [
+      {"item": "I", "texto": "Bullying é intimidação repetitiva."},
+      {"item": "II", "texto": "Perseguição é stalking."},
+      {"item": "III", "texto": "Extorsão envolve violência ou ameaça."},
+      {"item": "IV", "texto": "Receptação envolve produto de crime."},
+      {"item": "V", "texto": "Furto de coisa comum depende de representação."},
+      {"item": "VI", "texto": "Destruir veículo configura dano qualificado."}
+    ],
+    "alternativas": {
+      "A": "II e V.",
+      "B": "II, IV, V e VI.",
+      "C": "I, III, IV, V e VI.",
+      "D": "I, II, IV, V e VI.",
+      "E": "II, III e IV."
+    }
+  },
+  {
+    "numero": 36,
+    "enunciado": "Sobre crimes contra a administração pública, analise os itens.",
+    "itens": [
+      {"item": "I", "texto": "Patrocinar interesse privado é peculato."},
+      {"item": "II", "texto": "Solicitar vantagem é corrupção ativa."},
+      {"item": "III", "texto": "Deixar de agir por interesse é prevaricação."},
+      {"item": "IV", "texto": "Violência contra particular exclui resistência."},
+      {"item": "V", "texto": "Denunciação caluniosa é comunicar crime inexistente."}
+    ],
+    "alternativas": {
+      "A": "I, II, III e V.",
+      "B": "II e III.",
+      "C": "I, IV e V.",
+      "D": "III.",
+      "E": "III e V."
+    }
+  }
+]
+>>>>>>> d37de1a (feat: txt question)
