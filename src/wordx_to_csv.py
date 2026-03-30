@@ -29,7 +29,7 @@ def word_para_csv(caminho_docx, caminho_csv):
 
         for numero, resposta in matches:
             # Formato do ID (ajuste aqui se quiser mudar)
-            id_questao = f"pm2021_{tipo_atual.lower()}_{int(numero)}"
+            id_questao = f"pc2025_{tipo_atual.lower()}_{int(numero)}"
             linhas.append([id_questao, resposta])
 
     # Escreve o CSV
