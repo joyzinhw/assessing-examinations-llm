@@ -172,202 +172,202 @@
 # if __name__ == "__main__":
 #     processar()
 
-import os
-import re
+# import os
+# import re
 
-INPUT = "src/txt/dataset_pc2025.txt"
-OUTPUT = "src/txt/pm2021_c_limpo.txt"
-
-
-# ======================
-# 🔹 PRÉ-FORMATAÇÃO
-# ======================
-def pre_formatar(texto):
-    texto = re.sub(r'\s+(\d{1,3}\.)', r'\n\1', texto)
-    texto = re.sub(r'\s+([a-e]\))', r'\n\1', texto)
-    texto = re.sub(r'\s+(I{1,3}V?\.)', r'\n\1', texto)
-    return texto
+# INPUT = "src/txt/dataset_pc2025.txt"
+# OUTPUT = "src/txt/pm2021_c_limpo.txt"
 
 
-# ======================
-# 🔹 LIMPEZA GERAL
-# ======================
-def remover_lixo(texto):
-    linhas = texto.split("\n")
-    limpo = []
-
-    for linha in linhas:
-        l = linha.strip()
-
-        if re.search(r'CARGO:', l, re.IGNORECASE): continue
-        if re.search(r'PROVA TIPO', l, re.IGNORECASE): continue
-        if re.search(r'CONCURSO PÚBLICO', l, re.IGNORECASE): continue
-        if re.search(r'SEJUS', l, re.IGNORECASE): continue
-        if re.search(r'NOÇÕES DE DIREITO', l, re.IGNORECASE): continue
-        if re.search(r'DIREITO PENAL', l, re.IGNORECASE): continue
-
-        if re.match(r'^\d+$', l): continue
-        if re.search(r'\d+CONCURSO', l): continue
-
-        limpo.append(linha)
-
-    return "\n".join(limpo)
+# # ======================
+# # 🔹 PRÉ-FORMATAÇÃO
+# # ======================
+# def pre_formatar(texto):
+#     texto = re.sub(r'\s+(\d{1,3}\.)', r'\n\1', texto)
+#     texto = re.sub(r'\s+([a-e]\))', r'\n\1', texto)
+#     texto = re.sub(r'\s+(I{1,3}V?\.)', r'\n\1', texto)
+#     return texto
 
 
-# ======================
-# 🔹 REMOÇÃO DE LINKS
-# ======================
-def remover_links_datas(texto):
-    texto = re.sub(r'https?://\S+', '', texto)
-    texto = re.sub(r'\b\w+/\S+\.ghtml\S*', '', texto)
-    texto = re.sub(r'\S+\.(html|ghtml)\S*', '', texto)
-    texto = re.sub(r'Disponível em:.*', '', texto, flags=re.IGNORECASE)
-    texto = re.sub(r'Acesso em:.*', '', texto, flags=re.IGNORECASE)
-    texto = re.sub(r'\b\d{2}/\d{2}/\d{4}\b', '', texto)
-    return texto
+# # ======================
+# # 🔹 LIMPEZA GERAL
+# # ======================
+# def remover_lixo(texto):
+#     linhas = texto.split("\n")
+#     limpo = []
+
+#     for linha in linhas:
+#         l = linha.strip()
+
+#         if re.search(r'CARGO:', l, re.IGNORECASE): continue
+#         if re.search(r'PROVA TIPO', l, re.IGNORECASE): continue
+#         if re.search(r'CONCURSO PÚBLICO', l, re.IGNORECASE): continue
+#         if re.search(r'SEJUS', l, re.IGNORECASE): continue
+#         if re.search(r'NOÇÕES DE DIREITO', l, re.IGNORECASE): continue
+#         if re.search(r'DIREITO PENAL', l, re.IGNORECASE): continue
+
+#         if re.match(r'^\d+$', l): continue
+#         if re.search(r'\d+CONCURSO', l): continue
+
+#         limpo.append(linha)
+
+#     return "\n".join(limpo)
 
 
-# ======================
-# 🔹 REMOÇÃO DE URLs QUEBRADAS
-# ======================
-def remover_urls_quebradas(texto):
-    linhas = texto.split("\n")
-    limpo = []
-
-    for linha in linhas:
-        l = linha.strip()
-
-        if re.search(r'\d{4}/\d{2}/\d{2}', l):
-            continue
-
-        if l.count("-") >= 3:
-            continue
-
-        if "/" in l and len(l) < 120:
-            continue
-
-        if re.search(r'\.(html|ghtml)', l):
-            continue
-
-        limpo.append(linha)
-
-    return "\n".join(limpo)
+# # ======================
+# # 🔹 REMOÇÃO DE LINKS
+# # ======================
+# def remover_links_datas(texto):
+#     texto = re.sub(r'https?://\S+', '', texto)
+#     texto = re.sub(r'\b\w+/\S+\.ghtml\S*', '', texto)
+#     texto = re.sub(r'\S+\.(html|ghtml)\S*', '', texto)
+#     texto = re.sub(r'Disponível em:.*', '', texto, flags=re.IGNORECASE)
+#     texto = re.sub(r'Acesso em:.*', '', texto, flags=re.IGNORECASE)
+#     texto = re.sub(r'\b\d{2}/\d{2}/\d{4}\b', '', texto)
+#     return texto
 
 
-# ======================
-# 🔹 REMOÇÃO DE CITACOES
-# ======================
-def remover_citacoes(texto):
-    return re.sub(r'\([A-ZÁ-Ú][^()]{20,}\d{4}[^()]*\)', '', texto)
+# # ======================
+# # 🔹 REMOÇÃO DE URLs QUEBRADAS
+# # ======================
+# def remover_urls_quebradas(texto):
+#     linhas = texto.split("\n")
+#     limpo = []
+
+#     for linha in linhas:
+#         l = linha.strip()
+
+#         if re.search(r'\d{4}/\d{2}/\d{2}', l):
+#             continue
+
+#         if l.count("-") >= 3:
+#             continue
+
+#         if "/" in l and len(l) < 120:
+#             continue
+
+#         if re.search(r'\.(html|ghtml)', l):
+#             continue
+
+#         limpo.append(linha)
+
+#     return "\n".join(limpo)
 
 
-# ======================
-# 🔹 LIMPEZA OCR
-# ======================
-def clean_ocr(texto):
-    texto = re.sub(r',\s*,+', ',', texto)
-    texto = re.sub(r':\s*,+', ':', texto)
-    texto = re.sub(r'(\w+)-\n(\w+)', r'\1\2', texto)
-
-    texto = re.sub(r'\n(?!\s*(\d+\.|[a-e]\)))', ' ', texto)
-
-    correcoes = {
-        "ccomo": "como",
-        "omo": "como",
-        "prcomover": "promover",
-        "interes interesse": "interesse",
-        "altealternativa" : "alternativa",
-    }
-
-    for errado, certo in correcoes.items():
-        texto = re.sub(errado, certo, texto, flags=re.IGNORECASE)
-
-    texto = re.sub(r' +', ' ', texto)
-    texto = re.sub(r'\n+', '\n', texto)
-
-    return texto.strip()
+# # ======================
+# # 🔹 REMOÇÃO DE CITACOES
+# # ======================
+# def remover_citacoes(texto):
+#     return re.sub(r'\([A-ZÁ-Ú][^()]{20,}\d{4}[^()]*\)', '', texto)
 
 
-# ======================
-# 🔹 SEPARAÇÃO DE QUESTÕES
-# ======================
-def split_questoes(texto):
-    return re.split(r'(?=\n\d{1,3}\.\s)', texto)
+# # ======================
+# # 🔹 LIMPEZA OCR
+# # ======================
+# def clean_ocr(texto):
+#     texto = re.sub(r',\s*,+', ',', texto)
+#     texto = re.sub(r':\s*,+', ':', texto)
+#     texto = re.sub(r'(\w+)-\n(\w+)', r'\1\2', texto)
+
+#     texto = re.sub(r'\n(?!\s*(\d+\.|[a-e]\)))', ' ', texto)
+
+#     correcoes = {
+#         "ccomo": "como",
+#         "omo": "como",
+#         "prcomover": "promover",
+#         "interes interesse": "interesse",
+#         "altealternativa" : "alternativa",
+#     }
+
+#     for errado, certo in correcoes.items():
+#         texto = re.sub(errado, certo, texto, flags=re.IGNORECASE)
+
+#     texto = re.sub(r' +', ' ', texto)
+#     texto = re.sub(r'\n+', '\n', texto)
+
+#     return texto.strip()
 
 
-# ======================
-# 🔹 FORMATAÇÃO FINAL
-# ======================
-def formatar_questao(q):
-    q = q.strip()
-
-    match_num = re.match(r'(\d{1,3})\.\s*(.*)', q, re.DOTALL)
-    if not match_num:
-        return ""
-
-    numero = match_num.group(1)
-    corpo = match_num.group(2).strip()
-
-    # extrai alternativas
-    alternativas = re.findall(r'([a-e]\))\s*(.*?)(?=\s*[a-e]\)|$)', corpo, re.DOTALL)
-
-    # remove alternativas do corpo
-    corpo_sem_alts = re.split(r'[a-e]\)', corpo)[0].strip()
-
-    # extrai itens
-    itens = re.findall(r'(I{1,3}V?)\.\s*(.*?)(?=\nI{1,3}V?\.|\n\d+\.|$)', corpo_sem_alts, re.DOTALL)
-
-    # remove itens do corpo
-    corpo_limpo = re.split(r'\n?I{1,3}V?\.', corpo_sem_alts)[0].strip()
-
-    resultado = []
-    resultado.append(f"{numero}. {corpo_limpo}\n")
-
-    if itens:
-        resultado.append("Itens:")
-        for letra, texto in itens:
-            resultado.append(f"{letra}. {texto.strip()}")
-        resultado.append("")
-
-    resultado.append("Alternativas:")
-    for alt, texto in alternativas:
-        resultado.append(f"{alt} {texto.strip()}")
-
-    resultado.append("\n")
-
-    return "\n".join(resultado)
+# # ======================
+# # 🔹 SEPARAÇÃO DE QUESTÕES
+# # ======================
+# def split_questoes(texto):
+#     return re.split(r'(?=\n\d{1,3}\.\s)', texto)
 
 
-# ======================
-# 🔹 PROCESSAMENTO GERAL
-# ======================
-def processar():
-    with open(INPUT, "r", encoding="utf-8") as f:
-        texto = f.read()
+# # ======================
+# # 🔹 FORMATAÇÃO FINAL
+# # ======================
+# def formatar_questao(q):
+#     q = q.strip()
 
-    texto = pre_formatar(texto)
-    texto = remover_lixo(texto)
-    texto = remover_links_datas(texto)
-    texto = remover_urls_quebradas(texto)
-    texto = remover_citacoes(texto)
-    texto = clean_ocr(texto)
+#     match_num = re.match(r'(\d{1,3})\.\s*(.*)', q, re.DOTALL)
+#     if not match_num:
+#         return ""
 
-    questoes = split_questoes(texto)
+#     numero = match_num.group(1)
+#     corpo = match_num.group(2).strip()
 
-    resultado = []
+#     # extrai alternativas
+#     alternativas = re.findall(r'([a-e]\))\s*(.*?)(?=\s*[a-e]\)|$)', corpo, re.DOTALL)
 
-    for q in questoes:
-        if q.strip():
-            resultado.append(formatar_questao(q))
+#     # remove alternativas do corpo
+#     corpo_sem_alts = re.split(r'[a-e]\)', corpo)[0].strip()
 
-    with open(OUTPUT, "w", encoding="utf-8") as f:
-        f.write("\n".join(resultado))
+#     # extrai itens
+#     itens = re.findall(r'(I{1,3}V?)\.\s*(.*?)(?=\nI{1,3}V?\.|\n\d+\.|$)', corpo_sem_alts, re.DOTALL)
 
-    print("✔ PROCESSAMENTO CONCLUÍDO:", OUTPUT)
+#     # remove itens do corpo
+#     corpo_limpo = re.split(r'\n?I{1,3}V?\.', corpo_sem_alts)[0].strip()
+
+#     resultado = []
+#     resultado.append(f"{numero}. {corpo_limpo}\n")
+
+#     if itens:
+#         resultado.append("Itens:")
+#         for letra, texto in itens:
+#             resultado.append(f"{letra}. {texto.strip()}")
+#         resultado.append("")
+
+#     resultado.append("Alternativas:")
+#     for alt, texto in alternativas:
+#         resultado.append(f"{alt} {texto.strip()}")
+
+#     resultado.append("\n")
+
+#     return "\n".join(resultado)
 
 
-# ======================
-# 🔹 EXECUÇÃO
-# ======================
-if __name__ == "__main__":
-    processar()
+# # ======================
+# # 🔹 PROCESSAMENTO GERAL
+# # ======================
+# def processar():
+#     with open(INPUT, "r", encoding="utf-8") as f:
+#         texto = f.read()
+
+#     texto = pre_formatar(texto)
+#     texto = remover_lixo(texto)
+#     texto = remover_links_datas(texto)
+#     texto = remover_urls_quebradas(texto)
+#     texto = remover_citacoes(texto)
+#     texto = clean_ocr(texto)
+
+#     questoes = split_questoes(texto)
+
+#     resultado = []
+
+#     for q in questoes:
+#         if q.strip():
+#             resultado.append(formatar_questao(q))
+
+#     with open(OUTPUT, "w", encoding="utf-8") as f:
+#         f.write("\n".join(resultado))
+
+#     print("✔ PROCESSAMENTO CONCLUÍDO:", OUTPUT)
+
+
+# # ======================
+# # 🔹 EXECUÇÃO
+# # ======================
+# if __name__ == "__main__":
+#     processar()

@@ -5,7 +5,7 @@ import re
 import json
 from docx import Document
 
-PASTA_TXT = "src/txt"
+PASTA_TXT = "src/txt_limpo"
 PASTA_GABARITO = "src/gabaritos"
 SAIDA = "src/dataset/dataset.json"
 
@@ -196,7 +196,7 @@ print("Obtido:", len(dados))
 
 # com label
 
-PASTA_TXT = "src/txt"
+PASTA_TXT = "src/txt_limpo"
 PASTA_GABARITO = "src/gabaritos"
 SAIDA = "src/dataset/dataset_label.json"
 
