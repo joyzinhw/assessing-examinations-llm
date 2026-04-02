@@ -116,20 +116,3 @@ with open(SAIDA_PATH, "w", encoding="utf-8") as f:
 
 print(f"\n✅ Respostas salvas em: {SAIDA_PATH}")
 
-# ======================
-# 🔹 AVALIAÇÃO (OPCIONAL)
-# ======================
-acertos = 0
-total = 0
-
-for questao, resp in zip(dataset, resultados):
-    if "gabarito" in questao:
-        total += 1
-        if questao["gabarito"] == resp["resposta"]:
-            acertos += 1
-
-if total > 0:
-    acc = (acertos / total) * 100
-    print(f"\n🎯 Acurácia: {acc:.2f}% ({acertos}/{total})")
-else:
-    print("\nℹ️ Dataset sem gabarito para avaliação.")

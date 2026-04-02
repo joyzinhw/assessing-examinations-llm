@@ -1,15 +1,16 @@
 import json
 import torch
+import re
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 # ======================
 # 🔹 CONFIG
 # ======================
 DATASET_PATH = "src/dataset/dataset.json"
-SAIDA_PATH = "src/dataset/respostas.json"
+SAIDA_PATH = "src/dataset/respostas2.json"
 
 # ======================
-# 🔹 CARREGAR MODELO (QWEN)
+# 🔹 CARREGAR MODELO
 # ======================
 print("🔄 Carregando modelo Qwen...")
 
@@ -32,38 +33,94 @@ with open(DATASET_PATH, "r", encoding="utf-8") as f:
     dataset = json.load(f)
 
 # ======================
-# 🔹 FUNÇÃO DE PROMPT (CHAT TEMPLATE)
+# 🔹 NORMALIZAR DATASET (🔥 ESSENCIAL)
+# ======================
+def normalizar_dataset(dataset):
+    resultado = []
+
+    for item in dataset:
+        if isinstance(item, list):
+            resultado.extend(item)
+        elif isinstance(item, dict):
+            resultado.append(item)
+        else:
+            print("⚠️ Ignorado:", item)
+
+    return resultado
+
+dataset = normalizar_dataset(dataset)
+
+# ======================
+# 🔹 CORRIGIR ITENS MAL FORMATADOS
+# ======================
+def corrigir_itens(questao):
+    if "itens" not in questao or not questao["itens"]:
+        return questao
+
+    ultimo = questao["itens"][-1]["texto"]
+
+    if "Assinale" in ultimo:
+        partes = ultimo.split("Assinale", 1)
+
+        questao["itens"][-1]["texto"] = partes[0].strip()
+        questao["enunciado"] += "\nAssinale " + partes[1].strip()
+
+    return questao
+
+# ======================
+# 🔹 PROMPT MELHORADO
 # ======================
 def montar_prompt(questao):
-    system = """Você é um especialista em Direito brasileiro.
-Responda corretamente questões de múltipla escolha."""
+    if not isinstance(questao, dict):
+        return None
 
-    user = """
-Responda a questão e diga apenas a letra correta (A, B, C, D ou E).
+    if "enunciado" not in questao or "alternativas" not in questao:
+        return None
 
-REGRAS:
-- Analise todo o enunciado
-- Se houver itens (I, II, III...), analise TODOS
-- NÃO ignore os itens
-- NÃO explique
-- Responda apenas com uma letra
-"""
+    questao = corrigir_itens(questao)
+
+    system = """Você é um especialista em Direito brasileiro e concursos públicos."""
+
+    user = """Responda a questão de múltipla escolha. 
+    
+    INSTRUÇÕES: 
+    - Leia atentamente o enunciado - Se houver itens (I, II, III...), analise TODOS antes de decidir 
+    - Determine mentalmente quais estão corretos 
+    - NÃO explique 
+    - Responda apenas com uma letra (A, B, C, D ou E) """
+    
+#     user = """Responda a questão de múltipla escolha.
+
+# INSTRUÇÕES IMPORTANTES:
+# - Leia o enunciado com atenção
+# - Identifique o tema jurídico (Constitucional, Administrativo, Penal, etc.)
+# - Baseie-se na legislação brasileira (especialmente Constituição e leis)
+# - Analise TODAS as alternativas comparando com a regra correta
+# - Elimine alternativas parcialmente corretas ou com erros sutis
+# - Cuidado com prazos, exceções e termos técnicos (pegadinhas)
+# - NÃO escolha a alternativa apenas por parecer correta — verifique se está totalmente correta
+
+# REGRAS DE RESPOSTA:
+# - NÃO explique
+# - NÃO justifique
+# - Responda apenas com uma letra (A, B, C, D ou E)
+# """
 
     # Enunciado
     user += f"\nQUESTÃO:\n{questao['enunciado']}\n"
 
-    # Itens
-    if "itens" in questao and questao["itens"]:
+    # Itens (se existirem)
+    if questao.get("itens"):
         user += "\nITENS:\n"
         for item in questao["itens"]:
-            user += f"{item['item']}) {item['texto']}\n"
+            user += f"{item.get('item', '?')}) {item.get('texto', '')}\n"
 
     # Alternativas
     user += "\nALTERNATIVAS:\n"
     for letra, texto in questao["alternativas"].items():
         user += f"{letra}) {texto}\n"
 
-    user += "\nResposta (apenas uma letra):"
+    user += "\nResposta:"
 
     messages = [
         {"role": "system", "content": system},
@@ -77,14 +134,14 @@ REGRAS:
     )
 
 # ======================
-# 🔹 EXTRAIR LETRA
+# 🔹 EXTRAIR LETRA (🔥 MELHORADO)
 # ======================
 def extrair_letra(texto):
-    texto = texto.upper()
+    texto = texto.strip().upper()
 
-    for l in ["A", "B", "C", "D", "E"]:
-        if l in texto:
-            return l
+    match = re.search(r"\b([ABCDE])\b", texto)
+    if match:
+        return match.group(1)
 
     return "ERRO"
 
@@ -98,29 +155,33 @@ resultados = []
 for i, questao in enumerate(dataset):
     prompt = montar_prompt(questao)
 
+    if not prompt:
+        print(f"⚠️ Questão inválida: {questao}")
+        continue
+
     inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
 
     with torch.no_grad():
         output = model.generate(
             **inputs,
-            max_new_tokens=3,   # 🔥 menor = mais preciso
+            max_new_tokens=2,      # 🔥 mais restrito
             do_sample=False,
             temperature=0.0
         )
 
     resposta_bruta = tokenizer.decode(output[0], skip_special_tokens=True)
 
-    # 🔥 pega só o final
-    resposta_bruta = resposta_bruta.split("assistant")[-1]
+    # pega só resposta final
+    resposta_bruta = resposta_bruta.split("assistant")[-1].strip()
 
     letra = extrair_letra(resposta_bruta)
 
     resultados.append({
-        "id": questao["id"],
+        "id": questao.get("id", f"q_{i}"),
         "resposta": letra
     })
 
-    print(f"[{i+1}/{len(dataset)}] {questao['id']} -> {letra}")
+    print(f"[{i+1}/{len(dataset)}] {questao.get('id')} -> {letra}")
 
 # ======================
 # 🔹 SALVAR
@@ -131,7 +192,7 @@ with open(SAIDA_PATH, "w", encoding="utf-8") as f:
 print(f"\n✅ Respostas salvas em: {SAIDA_PATH}")
 
 # ======================
-# 🔹 AVALIAÇÃO (OPCIONAL)
+# 🔹 AVALIAÇÃO
 # ======================
 acertos = 0
 total = 0
@@ -146,4 +207,4 @@ if total > 0:
     acc = (acertos / total) * 100
     print(f"\n🎯 Acurácia: {acc:.2f}% ({acertos}/{total})")
 else:
-    print("\nℹ️ Dataset sem gabarito para avaliação.")
+    print("\nℹ️ Dataset sem gabarito.")      
