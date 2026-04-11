@@ -81,14 +81,22 @@ def montar_prompt(questao):
 
     system = """Você é um especialista em Direito brasileiro e concursos públicos."""
 
-    user = """Responda a questão de múltipla escolha. 
-    
-    INSTRUÇÕES: 
-    - Leia atentamente o enunciado - Se houver itens (I, II, III...), analise TODOS antes de decidir 
-    - Determine mentalmente quais estão corretos 
-    - NÃO explique 
-    - Responda apenas com uma letra (A, B, C, D ou E) """
-    
+    user = """Responda a questão de múltipla escolha.
+
+    INSTRUÇÕES IMPORTANTES:
+    - Leia o enunciado com atenção
+    - Identifique o tema jurídico (Constitucional, Administrativo, Penal, etc.)
+    - Baseie-se na legislação brasileira (especialmente Constituição e leis)
+    - Analise TODAS as alternativas comparando com a regra correta
+    - Elimine alternativas parcialmente corretas ou com erros sutis
+    - Cuidado com prazos, exceções e termos técnicos (pegadinhas)
+    - NÃO escolha a alternativa apenas por parecer correta — verifique se está totalmente correta
+
+    REGRAS DE RESPOSTA:
+    - NÃO explique
+    - NÃO justifique
+    - Responda apenas com uma letra (A, B, C, D ou E)
+    """
 #     user = """Responda a questão de múltipla escolha.
 
 # INSTRUÇÕES IMPORTANTES:

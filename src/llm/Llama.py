@@ -1,3 +1,20 @@
+#     user = """Responda a questão de múltipla escolha.
+
+# INSTRUÇÕES IMPORTANTES:
+# - Leia o enunciado com atenção
+# - Identifique o tema jurídico (Constitucional, Administrativo, Penal, etc.)
+# - Baseie-se na legislação brasileira (especialmente Constituição e leis)
+# - Analise TODAS as alternativas comparando com a regra correta
+# - Elimine alternativas parcialmente corretas ou com erros sutis
+# - Cuidado com prazos, exceções e termos técnicos (pegadinhas)
+# - NÃO escolha a alternativa apenas por parecer correta — verifique se está totalmente correta
+
+# REGRAS DE RESPOSTA:
+# - NÃO explique
+# - NÃO justifique
+# - Responda apenas com uma letra (A, B, C, D ou E)
+# ""
+
 import json
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
