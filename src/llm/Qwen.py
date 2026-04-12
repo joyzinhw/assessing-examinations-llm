@@ -229,14 +229,15 @@ import json
 import torch
 import re
 from transformers import AutoModelForCausalLM, AutoTokenizer
-from collections import Counter
 
 # ======================
 # 🔹 CONFIG
 # ======================
-DATASET_PATH = "src/dataset/dataset_tratado.json"  # 🔥 usar tratado
+DATASET_PATH = "src/dataset/dataset_tratado.json"
 SAIDA_PATH = "src/dataset/respostas_final.json"
-N_AMOSTRAS = 5  # 🔥 votação
+
+# DEBUG (ligar/desligar)
+DEBUG = True
 
 # ======================
 # 🔹 CARREGAR MODELO
@@ -292,65 +293,54 @@ def corrigir_itens(questao):
     return questao
 
 # ======================
-# 🔹 PROMPT INTELIGENTE
+# 🔹 PROMPT FORTE
 # ======================
 def montar_prompt(questao):
     if "enunciado" not in questao or "alternativas" not in questao:
         return None
 
     questao = corrigir_itens(questao)
-    tipo = questao.get("tipo", "NORMAL")
 
     system = "Você é um especialista em Direito brasileiro e concursos públicos."
 
     user = """Responda a questão de múltipla escolha.
 
 INSTRUÇÕES:
-- Analise cuidadosamente
+- Analise cuidadosamente o enunciado
 - Baseie-se na legislação brasileira
-- Elimine alternativas erradas
+- Elimine alternativas incorretas
 - Pense passo a passo (não mostre)
 
-FORMATO:
-Resposta: X
+FORMATO OBRIGATÓRIO:
+Responda APENAS assim:
+Resposta: A
+
+REGRAS:
+- NÃO explique
+- NÃO escreva texto extra
+- NÃO escreva mais de uma letra
 """
 
-    # 🔥 comportamento por tipo
-    if tipo == "MULTIPLOS_ITENS":
-        user += """
+    # tipo automático
+    enunciado_lower = questao["enunciado"].lower()
 
-TIPO: MÚLTIPLOS ITENS
-- Analise cada item separadamente (I, II, III)
-- Determine quais estão corretos
-- Escolha a alternativa correspondente
-"""
-
-    elif tipo == "VF":
-        user += """
-
-TIPO: VERDADEIRO/FALSO
-- Classifique cada item como V ou F
-- Monte a sequência correta
-- Compare com as alternativas
-"""
-
+    if "verdadeira" in enunciado_lower and "falsa" in enunciado_lower:
+        user += "\nTIPO: Verdadeiro/Falso\n"
+    elif questao.get("itens"):
+        user += "\nTIPO: Múltiplos itens\n"
     else:
-        user += """
+        user += "\nTIPO: Direta\n"
 
-TIPO: QUESTÃO DIRETA
-- Escolha a alternativa correta completa
-"""
-
-    # 🔹 enunciado
+    # enunciado
     user += f"\nQUESTÃO:\n{questao['enunciado']}\n"
 
-    # 🔹 itens
+    # itens
     if questao.get("itens"):
         user += "\nITENS:\n"
         for item in questao["itens"]:
             user += f"{item.get('item')}) {item.get('texto')}\n"
 
-    # 🔹 alternativas
+    # alternativas
     user += "\nALTERNATIVAS:\n"
     for letra, texto in questao["alternativas"].items():
         user += f"{letra}) {texto}\n"
@@ -369,23 +359,30 @@ TIPO: QUESTÃO DIRETA
     )
 
 # ======================
-# 🔹 EXTRAIR RESPOSTA
+# 🔹 EXTRAÇÃO ROBUSTA
 # ======================
 def extrair_letra(texto):
-    texto = texto.strip().upper()
+    texto = texto.upper()
 
-    match = re.search(r"RESPOSTA[:\s]*([ABCDE])", texto)
+    # padrão ideal
+    match = re.search(r"RESPOSTA[:\s\-]*([ABCDE])", texto)
     if match:
         return match.group(1)
 
-    match = re.search(r"\b([ABCDE])\b", texto)
+    # letra explícita
+    match = re.search(r"LETRA[:\s]*([ABCDE])", texto)
     if match:
         return match.group(1)
+
+    # fallback (última letra válida)
+    match = re.findall(r"[ABCDE]", texto)
+    if match:
+        return match[-1]
 
     return "ERRO"
 
 # ======================
-# 🔹 INFERÊNCIA COM VOTAÇÃO
+# 🔹 INFERÊNCIA
 # ======================
 print("🚀 Iniciando inferência...")
 
@@ -400,35 +397,33 @@ for i, questao in enumerate(dataset):
 
     inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
 
-    respostas = []
+    with torch.no_grad():
+        output = model.generate(
+            **inputs,
+            max_new_tokens=20,   # 🔥 corrigido
+            do_sample=False,     # 🔥 determinístico
+            temperature=0.0
+        )
 
-    for _ in range(N_AMOSTRAS):
-        with torch.no_grad():
-            output = model.generate(
-                **inputs,
-                max_new_tokens=5,
-                do_sample=True,
-                temperature=0.3,
-                top_p=0.9
-            )
+    texto = tokenizer.decode(output[0], skip_special_tokens=True)
 
-        texto = tokenizer.decode(output[0], skip_special_tokens=True)
+    # 🔥 NOVA EXTRAÇÃO (ESSENCIAL)
+    resposta_bruta = texto.split("Resposta:")[-1].strip()
 
-        resposta_bruta = texto[len(prompt):].strip()
-        letra = extrair_letra(resposta_bruta)
+    letra = extrair_letra(resposta_bruta)
 
-        respostas.append(letra)
-
-    # 🔥 votação
-    contagem = Counter(respostas)
-    letra_final = contagem.most_common(1)[0][0]
+    if DEBUG:
+        print("\n--- DEBUG ---")
+        print(texto)
+        print("EXTRAÍDO:", letra)
+        print("-------------\n")
 
     resultados.append({
         "id": questao.get("id", f"q_{i}"),
-        "resposta": letra_final
+        "resposta": letra
     })
 
-    print(f"[{i+1}/{len(dataset)}] -> {letra_final} | votos: {dict(contagem)}")
+    print(f"[{i+1}/{len(dataset)}] -> {letra}")
 
 # ======================
 # 🔹 SALVAR
