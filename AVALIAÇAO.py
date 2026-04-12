@@ -6,7 +6,7 @@ import pandas as pd
 CAMINHO_GABARITOS = "src/gabaritos"
 
 # 📄 Arquivo JSON com respostas do modelo
-ARQUIVO_JSON = "src/dataset/respostas.json"
+ARQUIVO_JSON = "src/dataset/respostas_qwen_2.5-7B.json"
 
 
 def carregar_gabaritos(caminho):
